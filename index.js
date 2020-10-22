@@ -6,7 +6,7 @@ app.use(express.json())
 
 let persons = [
     {
-        id:1,
+        id: 1,
         name:"Arto Hellas",
         number: "040-123456"
     },
@@ -34,13 +34,6 @@ let persons = [
 
 const date = () => {
     return new Date()
-}
-
-const generateId = () => {
-    const maxId = perosns.length > 0
-        ? Math.max(...persons.map(p => p.id))
-        : 0
-    return maxId + 1
 }
 
 const generateRndId = () => {
@@ -80,13 +73,26 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-    const body = request.body    
+    const body = request.body
+    
+    if (persons.find(p => p.name === request.body.name)) {
+        return response.status(400).json({
+            error: "name must be unique"
+        })
+    }
 
     if(!body.name) {
         return response.status(400).json({
-            error: "content missing"
+            error: "name is missing"
         })
     }
+
+    if(!body.number) {
+        return response.status(400).json({
+            error: "number is missing"
+        })
+    }
+
     const person = {
         id: generateRndId(),
         name: body.name,
