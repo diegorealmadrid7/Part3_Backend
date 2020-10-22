@@ -26,8 +26,16 @@ let persons = [
     }
 ]
 
+const date = () => {
+    return new Date()
+}
+
 app.get('/', (request, response) => {
-    response.send('<h1>Funca</h1>')
+    const text = persons.length > 0
+    ?   `Phonebook has info for ${persons.length} people`
+    : `Phonebook has info por 0 people`
+    const fecha = date()
+    response.send(`${text} </br> </br> ${fecha}`)
 })
 
 app.get('/api/persons', (request, response) => {
