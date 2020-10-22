@@ -1,4 +1,5 @@
 const express = require('express')
+const { request } = require('express')
 const app = express()
 
 app.use(express.json())
@@ -35,6 +36,19 @@ const date = () => {
     return new Date()
 }
 
+const generateId = () => {
+    const maxId = perosns.length > 0
+        ? Math.max(...persons.map(p => p.id))
+        : 0
+    return maxId + 1
+}
+
+const generateRndId = () => {
+    const min = Math.ceil(Math.max(...persons.map(p => p.id)))
+    const max = Math.floor(100)            
+    return Math.floor(Math.random() * (max - min) + min)
+}
+
 app.get('/', (request, response) => {
     const text = persons.length > 0
     ?   `Phonebook has info for ${persons.length} people`
@@ -63,6 +77,25 @@ app.delete('/api/persons/:id', (request, response) => {
     persons = persons.filter(p => p.id !== id)
 
     response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+    const body = request.body    
+
+    if(!body.name) {
+        return response.status(400).json({
+            error: "content missing"
+        })
+    }
+    const person = {
+        id: generateRndId(),
+        name: body.name,
+        number: body.number
+    }
+    
+    persons = persons.concat(person)
+
+    response.json(person)
 })
 
 const PORT = 3001
